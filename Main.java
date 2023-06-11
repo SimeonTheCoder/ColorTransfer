@@ -3,9 +3,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, URISyntaxException {
         String inputPath = "";
         String outputPath = "";
 
@@ -13,13 +17,21 @@ public class Main {
 
         String maskPath = "";
 
+        BufferedImage sourceImg = null;
+        BufferedImage targetImg = null;
+        BufferedImage maskImg = null;
+
         for (String arg : args) {
             if(arg.startsWith("-s")) {
                 inputPath = arg.split("\\(")[1].split("\\)")[0];
+
+                sourceImg = ImageIO.read(new File(inputPath));
             }
 
             if(arg.startsWith("-t")) {
                 targetPath = arg.split("\\(")[1].split("\\)")[0];
+
+                targetImg = ImageIO.read(new File(targetPath));
             }
 
             if(arg.startsWith("-o")) {
@@ -28,21 +40,31 @@ public class Main {
 
             if(arg.startsWith("-m")) {
                 maskPath = arg.split("\\(")[1].split("\\)")[0];
+
+                maskImg = ImageIO.read(new File(maskPath));
+            }
+
+            if(arg.startsWith("-b")) {
+                if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                    Desktop.getDesktop().browse(new URI("https://www.google.com/search?q=" + arg.split("\\(")[1].split("\\)")[0]));
+                }
+
+                Scanner scanner = new Scanner(System.in);
+
+                String urlString = scanner.nextLine();
+
+                URL url = new URL(urlString);
+
+                targetImg = ImageIO.read(url);
             }
         }
 
-        ImageStats source = ImageAnalysis.analyse(inputPath);
-        ImageStats target = ImageAnalysis.analyse(targetPath);
+        ImageStats source = ImageAnalysis.analyse(sourceImg);
+        ImageStats target = ImageAnalysis.analyse(targetImg);
 
-        BufferedImage image;
+        BufferedImage image = sourceImg;
 
-        BufferedImage mask = ImageIO.read(new File(maskPath));
-
-        try {
-            image = ImageIO.read(new File(inputPath));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        BufferedImage mask = maskImg;
 
         for(int i = 0; i < image.getHeight(); i ++) {
             for(int j = 0; j < image.getWidth(); j ++) {

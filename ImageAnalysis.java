@@ -1,8 +1,5 @@
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 public class ImageAnalysis {
     static Color rgbToYCbCr(Color RGB)
@@ -39,15 +36,7 @@ public class ImageAnalysis {
         return new Color(r, g, b);
     }
 
-    public static ImageStats analyse(String path) {
-        BufferedImage image;
-
-        try {
-            image = ImageIO.read(new File(path));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
+    public static ImageStats analyse(BufferedImage image) {
         double averageRed = 0;
         double averageGreen = 0;
         double averageBlue = 0;
