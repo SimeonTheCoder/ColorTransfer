@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class ColTransfer{
-    public static BufferedImage transfer(BufferedImage image, ImageStats source, ImageStats target, BufferedImage mask) {
+    public static BufferedImage transfer(BufferedImage image, ImageStats source, ImageStats target, BufferedImage mask, boolean interpolation) {
         for(int i = 0; i < image.getHeight(); i ++) {
             for(int j = 0; j < image.getWidth(); j ++) {
                 Color col = new Color(image.getRGB(j, i));
@@ -37,13 +37,19 @@ public class ColTransfer{
 
                 Color result = ImageAnalysis.YCbCrToRGB(before);
 
-                float[] hsbValues = new float[3];
-                Color.RGBtoHSB(result.getRed(), result.getGreen(), result.getBlue(), hsbValues);
+                Color finalColor;
+                
+                if(interpolation) {
+                    float[] hsbValues = new float[3];
+                    Color.RGBtoHSB(result.getRed(), result.getGreen(), result.getBlue(), hsbValues);
 
-                float[] hsbValues2 = new float[3];
-                Color.RGBtoHSB(col.getRed(), col.getGreen(), col.getBlue(), hsbValues2);
+                    float[] hsbValues2 = new float[3];
+                    Color.RGBtoHSB(col.getRed(), col.getGreen(), col.getBlue(), hsbValues2);
 
-                Color finalColor = new Color(Color.HSBtoRGB(hsbValues[0], hsbValues[1], hsbValues2[2]));
+                    finalColor = new Color(Color.HSBtoRGB(hsbValues[0], hsbValues[1], hsbValues2[2]));
+                }else{
+                    finalColor = result;
+                }
 
                 Color maskColor = null;
 

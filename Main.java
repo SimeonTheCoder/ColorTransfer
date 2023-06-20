@@ -16,6 +16,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws IOException, URISyntaxException {
         boolean display = false;
+        boolean interpolation = false;
 
         String inputPath = "";
         String outputPath = "";
@@ -51,6 +52,10 @@ public class Main {
                 maskPath = arg.split("\\(")[1].split("\\)")[0];
 
                 maskImg = ImageIO.read(new File(maskPath));
+            }
+
+            if(arg.startsWith("-i")) {
+                interpolation = true;
             }
 
             if(arg.startsWith("-b")) {
@@ -89,7 +94,7 @@ public class Main {
 
         BufferedImage mask = maskImg;
 
-        image = ColTransfer.transfer(image, source, target, mask);
+        image = ColTransfer.transfer(image, source, target, mask, interpolation);
 
         File file = new File(outputPath);
 
